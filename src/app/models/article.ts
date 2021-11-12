@@ -1,9 +1,8 @@
-'use strict';
 
-const { Sequelize, DataTypes } = require('sequelize');
-const articleType = require('./articleType');
+import { Sequelize, DataTypes } from 'sequelize'
+import { articleType } from './articleType'
 
-const article = function (seq) {
+export const article = function (seq: Sequelize) {
   const ArticleModel = seq.define('article', {
     id: {
       type: DataTypes.INTEGER,
@@ -21,8 +20,12 @@ const article = function (seq) {
   });
 
   const articleTypeModel = articleType(seq);
-  ArticleModel.belongsTo(articleTypeModel, { as: 'type', foreignKey: 'typeId', targetKey: 'id' });
+  ArticleModel.belongsTo(articleTypeModel, {
+    as: 'type',
+    foreignKey: 'typeId',
+    targetKey: 'id'
+  });
   return ArticleModel;
 }
 
-module.exports = article;
+

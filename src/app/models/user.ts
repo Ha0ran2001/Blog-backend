@@ -1,8 +1,6 @@
-'use strict';
+import { Sequelize, DataTypes } from 'sequelize'
 
-const { Sequelize, DataTypes } = require('sequelize');
-
-const user = function (seq) {
+export const user = function (seq: Sequelize) {
   const UserModel = seq.define('user', {
     id: {
       type: DataTypes.INTEGER,

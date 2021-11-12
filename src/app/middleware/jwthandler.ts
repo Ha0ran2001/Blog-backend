@@ -1,7 +1,8 @@
-const jwt = require('jsonwebtoken');
+import jwt from 'jsonwebtoken'
+import { CtxContext } from '../interface/context';
 
-module.exports = () => {
-  return async (ctx, next) => {
+export default () => {
+  return async (ctx: CtxContext, next: () => Promise<any>) => {
     if (ctx.header && ctx.header.authorization) {
       const token = ctx.header.authorization.slice(7);
       let decode;
@@ -9,7 +10,7 @@ module.exports = () => {
         try {
           decode = jwt.verify(token, 'ha0ran');
           // return await next();
-        } catch (err) {
+        } catch (err: any) {
           ctx.body = {
             msg: err.message
           }

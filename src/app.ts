@@ -1,31 +1,28 @@
 
-const Koa = require('koa')
+import Koa from 'koa'
+import json from 'koa-json'
+// import onerror from 'koa-onerror'
+import bodyparser from 'koa-bodyparser'
+// import parameter from 'koa-parameter'
+import logger from 'koa-logger'
+import koaJwt from 'koa-jwt'
+import cors from 'koa2-cors'
+
 const app = new Koa()
-const views = require('koa-views')
-const json = require('koa-json')
-const onerror = require('koa-onerror')
-const bodyparser = require('koa-bodyparser');
-const koaBody = require('koa-body');
-const parameter = require('koa-parameter')
-const logger = require('koa-logger');
-const path = require('path');
-const koaJwt = require('koa-jwt');
-const cors = require('koa2-cors');
-
-
 // 引入路由
-const userRouter = require('./routes/users');
-const articleRouter = require('./routes/article');
-const articleTypeRouter = require('./routes/articleType');
-const frontRouter = require('./routes/front');
+import userRouter from './router/users'
+import articleRouter from './router/article'
+import articleTypeRouter from './router/articleType'
+import frontRouter from './router/front'
+import { CtxContext } from './app/interface/context'
 
 // 引入 sequelize 配置
-const sequelizeConfig = require('./config/sequelize.config');
+import sequelizeConfig from './config/sequelize.config'
 // 引入jwt验证中间件
-const jwthandler = require('./app/middleware/jwthandler');
+import jwthandler from './app/middleware/jwthandler'
 
 // error handler
-onerror(app)
+// onerror(app)
 
 // sequelize
 app.use(sequelizeConfig());
@@ -44,10 +41,10 @@ app.use(sequelizeConfig());
 //     },
 //   }
 // }));
+
+
 app.use(cors({
-  origin: function (ctx) {
-    return ctx.header.origin
-  }
+  origin: (ctx: any) => ctx.header.origin
 }));
 app.use(bodyparser({
   enableTypes: ['json', 'form', 'text',]
@@ -55,27 +52,30 @@ app.use(bodyparser({
 app.use(json())
 app.use(logger())
 app.use(require('koa-static')(__dirname + '/public'))
-app.use(views(__dirname + '/views', {
-  extension: 'pug'
-}));
 app.use(koaJwt({ secret: 'ha0ran' }).unless({ path: [/^\/user\/login/, /^\/front/] }));
 app.use(jwthandler());
-app.use(parameter(app));
+// app.use(parameter(app));
 
 
 // logger
 app.use(async (ctx, next) => {
-  const start = new Date()
+  const start = +new Date()
   await next()
-  const ms = new Date() - start
+  const ms = +new Date() - start;
   console.log(`${ctx.method} ${ctx.url} - ${ms}ms`)
 })
 
 // routes
-articleRouter(app, '/article');
-userRouter(app, '/user');
-articleTypeRouter(app, '/front');
-frontRouter(app, '/front');
+articleRouter(app);
+userRouter(app);
+articleTypeRouter(app);
+frontRouter(app);
+
+
+app.listen(3000, () => {
+  console.log('listening on 3000...')
+})
+
 
 
 

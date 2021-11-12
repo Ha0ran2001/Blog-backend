@@ -1,6 +1,6 @@
-const { Sequelize } = require('sequelize');
-const articleType = require('../models/articleType');
-const articleModel = require('../../routes/article');
+import { Sequelize } from 'sequelize'
+import { articleType } from '../models/articleType'
+import articleModel from '../../router/article'
 
 
 const articleTypes = [
@@ -8,7 +8,7 @@ const articleTypes = [
 ]
 
 // 创建类型
-async function create(seq) {
+export async function create(seq: Sequelize) {
   const ArticleTypeModel = articleType(seq);
   // ArticleTypeModel.sync(); // 建表
 
@@ -17,18 +17,13 @@ async function create(seq) {
     ArticleTypeModel.create({
       typeName: item
     });
-  })
+  });
 }
 
 // 获取类型
-async function getArticleType(seq) {
+export async function getArticleType(seq: Sequelize) {
   const ArticleTypeModel = articleType(seq);
 
   const types = await ArticleTypeModel.findAll();
   return types;
-}
-
-module.exports = {
-  create,
-  getArticleType
 }

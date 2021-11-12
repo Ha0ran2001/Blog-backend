@@ -1,17 +1,16 @@
-'use strict';
 
-const { Sequelize, QueryTypes } = require('sequelize');
-const article = require('../models/article');
-const articleTypeModel = require('../models/articleType');
-
+import { Sequelize, QueryTypes } from 'sequelize'
+import { CtxContext } from '../interface/context';
+import { article } from '../models/article'
+import { articleType } from '../models/articleType'
 
 // 创建 && 插入信息
-const create = async function (seq, ctx) {
+export const create = async function (seq: Sequelize, ctx: CtxContext) {
   const ArticleModel = await article(seq);
   // ArticleModel.sync(); // 第一次使用，并将下面的创建注释掉；第二次使用，打开创建，这是新建表
   const articleData = ctx.request.body;
   console.log('插入的文章', articleData);
-  const result = await ArticleModel.create(articleData);
+  const result: any = await ArticleModel.create(articleData);
   const insert = result._options.isNewRecord;
   const insertId = result.null;
   return {
@@ -22,7 +21,7 @@ const create = async function (seq, ctx) {
 
 // 删除
 
-const deleteItem = async function (seq, ctx) {
+export const deleteItem = async function (seq: Sequelize, ctx: CtxContext) {
   const id = ctx.params.id;
   const ArticleModel = await article(seq);
   const res = await ArticleModel.destroy({
@@ -40,15 +39,15 @@ const deleteItem = async function (seq, ctx) {
 
 // 查--- 获取所有信息
 
-const getAllArticles = async function (seq) {
+export const getAllArticles = async function (seq: Sequelize) {
 
   const ArticleModel = await article(seq);
 
   const sql = 'SELECT article.id as id,' +
     'article.title as title,' +
-    'article.introduce as introduce,' +
+    'article.content as content,' +
     "FROM_UNIXTIME(article.createTime,'%Y-%m-%d') as createTime," +
-    'article.visitCount as visitCount,' +
+    // 'article.visitCount as visitCount,' +
     'articleType.typeName as typeName ' +
     'FROM article LEFT JOIN articleType ON article.typeId = articleType.id ' +
     'ORDER BY article.id DESC';
@@ -60,7 +59,7 @@ const getAllArticles = async function (seq) {
 
 // 查---获取文章详细内容
 
-const getArticleDetail = async function (seq, ctx) {
+export const getArticleDetail = async function (seq: Sequelize, ctx: CtxContext) {
   const id = ctx.params.id;
   const ArticleModel = await article(seq);
   const res = await ArticleModel.findOne({
@@ -73,7 +72,7 @@ const getArticleDetail = async function (seq, ctx) {
 
 // 查---获取休要修改的信息
 
-const getReviseItem = async function (seq, ctx) {
+export const getReviseItem = async function (seq: Sequelize, ctx: CtxContext) {
   const id = ctx.params.id;
   const ArticleModel = await article(seq);
   const res = await ArticleModel.findOne({
@@ -86,7 +85,7 @@ const getReviseItem = async function (seq, ctx) {
 
 
 // 查---根据typeId获取
-const getArticleByTypeId = async function (seq, ctx) {
+export const getArticleByTypeId = async function (seq: Sequelize, ctx: CtxContext) {
   const id = ctx.params.id;
   const ArticleModel = await article(seq);
   const res = await ArticleModel.findAll({
@@ -100,7 +99,7 @@ const getArticleByTypeId = async function (seq, ctx) {
 
 
 // 改
-const reviseItem = async function (seq, ctx) {
+export const reviseItem = async function (seq: Sequelize, ctx: CtxContext) {
   const ArticleModel = await article(seq);
   const articleData = ctx.request.body;
   console.log('要修改的', articleData);
@@ -114,16 +113,4 @@ const reviseItem = async function (seq, ctx) {
   } catch (err) {
     console.log(err);
   }
-
-
-}
-
-module.exports = {
-  create,
-  deleteItem,
-  getAllArticles,
-  reviseItem,
-  getReviseItem,
-  getArticleDetail,
-  getArticleByTypeId
 }

@@ -1,16 +1,9 @@
-'use strict';
+import { Sequelize } from 'sequelize'
+import { options } from './db'
+import { CtxContext } from '../app/interface/context'
 
-const { Sequelize } = require('sequelize');
-
-module.exports = () => {
-  return async (ctx, next) => {
-    const options = {
-      host: 'localhost',
-      user: 'root',
-      password: '123456',
-      port: '3306',
-      database: 'sequelize'
-    };
+export default () => {
+  return async (ctx: CtxContext, next: () => Promise<any>) => {
 
     const seq = new Sequelize(options.database, options.user, options.password, {
       host: options.host,

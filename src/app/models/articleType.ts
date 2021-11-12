@@ -1,6 +1,7 @@
-const { Sequelize, DataTypes } = require('sequelize');
+import { Sequelize, DataTypes } from 'sequelize'
 
-const articleType = function (seq) {
+
+export const articleType = function (seq: Sequelize) {
   const ArticleTypeModel = seq.define('articleType', {
     id: {
       type: DataTypes.INTEGER,
@@ -16,4 +17,3 @@ const articleType = function (seq) {
   return ArticleTypeModel;
 }
 
-module.exports = articleType;
